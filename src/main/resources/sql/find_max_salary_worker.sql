@@ -1,0 +1,1 @@
+select name, MAX(salary) as SALARY from worker where salary = (select max(salary) from worker) group by name;
