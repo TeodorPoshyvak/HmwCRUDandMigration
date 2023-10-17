@@ -3,10 +3,10 @@ insert into worker(NAME, BIRTHDAY, LEVEL, SALARY) values('Ivan', '1997-01-01', '
                                                         ('Taras', '1987-03-03', 'Senior',5500),
                                                         ('Oleg', '2000-04-04', 'Middle',3000),
                                                         ('Alex', '1999-05-05', 'Trainee',600),
-                                                        ('Andew', '1997-06-06', 'Junior',1200),
+                                                        ('Andrew', '1997-06-06', 'Junior',1200),
                                                         ('Anna', '1988-07-07', 'Senior',6800),
                                                         ('Serhii', '1989-08-08', 'Middle',3500),
-                                                        ('Olga', '1989-09-08', 'Middle',3500),
+                                                        ('Olga', '1989-09-09', 'Middle',3500),
                                                         ('Petro', '1997-10-10', 'Junior',2000);
 
 insert into client (NAME) values('Oliver'),

@@ -7,6 +7,8 @@ import org.example.entities.MaxSalaryWorker;
 import org.example.entities.YoungestEldestWorker;
 import org.example.readFiles.SqlFileReader;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -15,64 +17,102 @@ import java.util.List;
 
 
 public class DatabaseQueryService {
-    static Database instance = Database.getInstance();
+    Connection connection = Database.getConnection();
+    PreparedStatement preparedStatementFindLongestProject;
+    PreparedStatement preparedStatementFindMaxProjectsClient;
+    PreparedStatement preparedStatementFindMaxSalaryWorker;
+    PreparedStatement preparedStatementFindYoungestEldestWorkers;
 
-    public static List<LongestProject> findLongestProject() throws SQLException {
+    {
+        try {
+            this.preparedStatementFindLongestProject = connection.prepareStatement(SqlFileReader.sqlReaderFile("src/main/resources/sql/find_longest_project.sql"));
+            this.preparedStatementFindMaxProjectsClient = connection.prepareStatement(SqlFileReader.sqlReaderFile("src/main/resources/sql/find_max_projects_client.sql"));
+            this.preparedStatementFindMaxSalaryWorker = connection.prepareStatement(SqlFileReader.sqlReaderFile("src/main/resources/sql/find_max_salary_worker.sql"));
+            this.preparedStatementFindYoungestEldestWorkers = connection.prepareStatement(SqlFileReader.sqlReaderFile( "src/main/resources/sql/find_youngest_eldest_workers.sql"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public  List<LongestProject> findLongestProject() throws SQLException {
             List<LongestProject> list = new ArrayList<>();
-            ResultSet resultSet = instance.executeResult((SqlFileReader.sqlReaderFile("src/main/resources/sql/find_longest_project.sql")));
+        try(ResultSet resultSet = preparedStatementFindLongestProject.executeQuery()) {
             while (resultSet.next()) {
-                LongestProject longestProject = new LongestProject(resultSet.getString("project_name"), resultSet.getInt("count_mounth"));
+                LongestProject longestProject = new LongestProject(resultSet.getString("project_name"),
+                                                                   resultSet.getInt("count_mounth"));
                 list.add(longestProject);
             }
             resultSet.close();
             return list;
+        }catch (SQLException e){
+            throw new SQLException(e);
+        }
     }
 
-    public static List<MaxProjectsClient> findMaxProjectsClient() throws SQLException {
+    public List<MaxProjectsClient> findMaxProjectsClient() throws SQLException {
                 List<MaxProjectsClient> list = new ArrayList<>();
-                ResultSet resultSet = instance.executeResult(SqlFileReader.sqlReaderFile("src/main/resources/sql/find_max_projects_client.sql"));
-                while (resultSet.next()) {
-                    MaxProjectsClient maxProjectsClient = new MaxProjectsClient(resultSet.getString("name"), resultSet.getInt("project_count"));
-                    list.add(maxProjectsClient);
+
+                try(ResultSet resultSet = preparedStatementFindMaxProjectsClient.executeQuery()) {
+
+                    while (resultSet.next()) {
+                        MaxProjectsClient maxProjectsClient = new MaxProjectsClient(resultSet.getString("name"),
+                                                                                    resultSet.getInt("project_count"));
+                        list.add(maxProjectsClient);
+                    }
+
+                    resultSet.close();
+                    return list;
+                }catch (SQLException e){
+                    throw new SQLException(e);
                 }
-                resultSet.close();
-                return list;
     }
 
-    public static List<MaxSalaryWorker> findMaxSalaryWorker() throws SQLException {
+    public List<MaxSalaryWorker> findMaxSalaryWorker() throws SQLException {
                 List<MaxSalaryWorker> list = new ArrayList<>();
-                ResultSet resultSet = instance.executeResult(SqlFileReader.sqlReaderFile("src/main/resources/sql/find_max_salary_worker.sql"));
-                while (resultSet.next()) {
-                    MaxSalaryWorker maxSalaryWorker = new MaxSalaryWorker(resultSet.getString("name"), resultSet.getInt("SALARY"));
-                    list.add(maxSalaryWorker);
+                try(ResultSet resultSet = preparedStatementFindMaxSalaryWorker.executeQuery()) {
+
+                    while (resultSet.next()) {
+                        MaxSalaryWorker maxSalaryWorker = new MaxSalaryWorker(resultSet.getString("name"),
+                                                                              resultSet.getInt("SALARY"));
+                        list.add(maxSalaryWorker);
+                    }
+                    resultSet.close();
+                    return list;
+                }catch (SQLException e){
+                    throw new SQLException(e);
                 }
-                resultSet.close();
-                return list;
     }
 
 
-    public static List<YoungestEldestWorker> findYoungestEldestWorkers() throws SQLException {
+    public List<YoungestEldestWorker> findYoungestEldestWorkers() throws SQLException {
             List<YoungestEldestWorker> list = new ArrayList<>();
-            ResultSet resultSet = instance.executeResult(SqlFileReader.sqlReaderFile( "src/main/resources/sql/find_youngest_eldest_workers.sql"));
-            while (resultSet.next()) {
-                YoungestEldestWorker youngestEldestWorker = new YoungestEldestWorker(resultSet.getString("TYPE"), resultSet.getString("NAME"), LocalDate.parse(resultSet.getString("BIRTHDAY")));
-                list.add(youngestEldestWorker);
+            try(ResultSet resultSet = preparedStatementFindYoungestEldestWorkers.executeQuery()) {
+                while (resultSet.next()) {
+                    YoungestEldestWorker youngestEldestWorker = new YoungestEldestWorker(resultSet.getString("TYPE"),
+                                                                                         resultSet.getString("NAME"),
+                                                                                         LocalDate.parse(resultSet.getString("BIRTHDAY")));
+                    list.add(youngestEldestWorker);
+                }
+                resultSet.close();
+                return list;
+            }catch (SQLException e){
+                throw new SQLException(e);
             }
-            resultSet.close();
-            return list;
     }
 
     public static void main(String[] args) throws SQLException {
-        List<LongestProject> list = DatabaseQueryService.findLongestProject();
+        DatabaseQueryService databaseQueryService = new DatabaseQueryService();
+
+        List<LongestProject> list = databaseQueryService.findLongestProject();
         list.forEach(System.out::println);
 
-        List<MaxProjectsClient> list1 = DatabaseQueryService.findMaxProjectsClient();
+        List<MaxProjectsClient> list1 = databaseQueryService.findMaxProjectsClient();
         list1.forEach(System.out::println);
 
-        List<MaxSalaryWorker> list2 = DatabaseQueryService.findMaxSalaryWorker();
+        List<MaxSalaryWorker> list2 = databaseQueryService.findMaxSalaryWorker();
         list2.forEach(System.out::println);
 
-        List<YoungestEldestWorker> list3 = DatabaseQueryService.findYoungestEldestWorkers();
+        List<YoungestEldestWorker> list3 = databaseQueryService.findYoungestEldestWorkers();
         list3.forEach(System.out::println);
 
     }

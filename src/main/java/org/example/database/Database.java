@@ -28,16 +28,11 @@ public class Database {
     }
 
     public int executeUpdate(String query) {
-        try (Statement statement = connection.createStatement()) {
-            return statement.executeUpdate(query);
+        try (PreparedStatement  preparedStatement = connection.prepareStatement(query)) {
+            return preparedStatement.executeUpdate(query);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public ResultSet executeResult(String query) throws SQLException {
-            Statement statement = connection.createStatement();
-            return statement.executeQuery(query);
     }
 
     public void closeConnection() {

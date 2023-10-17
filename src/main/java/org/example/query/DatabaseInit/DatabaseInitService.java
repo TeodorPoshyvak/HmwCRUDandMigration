@@ -3,14 +3,31 @@ package org.example.query.DatabaseInit;
 import org.example.database.Database;
 import org.example.readFiles.SqlFileReader;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 public class DatabaseInitService {
-   static Database database = Database.getInstance();
-    public static int dataBaseInitService(){
-        int statement = database.executeUpdate(SqlFileReader.sqlReaderFile("src/main/resources/sql/init_db.sql"));
-        database.closeConnection();
-        return statement;
+    private PreparedStatement preparedStatementInitDb;
+
+    public DatabaseInitService(){
+        try {
+            Connection connection = Database.getConnection();
+            this.preparedStatementInitDb = connection.prepareStatement(SqlFileReader.sqlReaderFile("src/main/resources/sql/init_db.sql"));
+        } catch (SQLException e){
+        throw new RuntimeException(e);
+        }
+    }
+
+    public void dataBaseInitService(){
+        try {
+           preparedStatementInitDb.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     public static void main(String[] args) {
-        DatabaseInitService.dataBaseInitService();
+        DatabaseInitService databaseInitService = new DatabaseInitService();
+        databaseInitService.dataBaseInitService();
     }
 }
