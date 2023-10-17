@@ -1,4 +1,4 @@
-package org.example.propers.propers;
+package org.example.readFiles;
 
 import java.io.IOException;
 import java.io.InputStream;

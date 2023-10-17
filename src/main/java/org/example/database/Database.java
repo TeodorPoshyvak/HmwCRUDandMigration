@@ -1,7 +1,6 @@
-package org.example.propers.database;
+package org.example.database;
 
-import org.example.propers.propers.PropertyReader;
-
+import org.example.readFiles.PropertyReader;
 import java.sql.*;
 
 public class Database {
@@ -34,6 +33,11 @@ public class Database {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public ResultSet executeResult(String query) throws SQLException {
+            Statement statement = connection.createStatement();
+            return statement.executeQuery(query);
     }
 
     public void closeConnection() {
