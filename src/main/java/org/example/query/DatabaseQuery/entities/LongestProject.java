@@ -1,4 +1,4 @@
-package org.example.entities;
+package org.example.query.DatabaseQuery.entities;
 
 public class LongestProject {
     private String project_name;

@@ -1,4 +1,4 @@
-package org.example.entities;
+package org.example.query.DatabaseQuery.entities;
 
 public class MaxSalaryWorker {
     private String name;

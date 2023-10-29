@@ -1,4 +1,4 @@
-package org.example.entities;
+package org.example.query.DatabaseQuery.entities;
 
 import java.time.LocalDate;
 

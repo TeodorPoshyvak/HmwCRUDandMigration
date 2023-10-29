@@ -1,10 +1,10 @@
 package org.example.query.DatabaseQuery;
 
 import org.example.database.Database;
-import org.example.entities.LongestProject;
-import org.example.entities.MaxProjectsClient;
-import org.example.entities.MaxSalaryWorker;
-import org.example.entities.YoungestEldestWorker;
+import org.example.query.DatabaseQuery.entities.LongestProject;
+import org.example.query.DatabaseQuery.entities.MaxProjectsClient;
+import org.example.query.DatabaseQuery.entities.MaxSalaryWorker;
+import org.example.query.DatabaseQuery.entities.YoungestEldestWorker;
 import org.example.readFiles.SqlFileReader;
 
 import java.sql.Connection;

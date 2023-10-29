@@ -1,6 +1,8 @@
 package org.example.database;
 
 import org.example.readFiles.PropertyReader;
+import org.flywaydb.core.Flyway;
+
 import java.sql.*;
 
 public class Database {
@@ -12,6 +14,8 @@ public class Database {
         String user = PropertyReader.getUserForPostgres();
         String password = PropertyReader.getPasswordForPostgres();
 
+        Flyway flyway = Flyway.configure().dataSource(url, user, password).load();
+        flyway.migrate();
         try {
             connection = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
@@ -25,14 +29,6 @@ public class Database {
 
     public static Connection getConnection() {
         return connection;
-    }
-
-    public int executeUpdate(String query) {
-        try (PreparedStatement  preparedStatement = connection.prepareStatement(query)) {
-            return preparedStatement.executeUpdate(query);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void closeConnection() {
