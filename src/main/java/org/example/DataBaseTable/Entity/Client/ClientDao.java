@@ -28,7 +28,7 @@ public class ClientDao {
 
     public ClientDao(Connection connection) {
         try {
-            this.insertClientStatement = connection.prepareStatement(CREATE_CLIENT);
+            this.insertClientStatement = connection.prepareStatement(CREATE_CLIENT, PreparedStatement.RETURN_GENERATED_KEYS);
             this.updateNameClient = connection.prepareStatement(UPDATE_NAME_CLIENT);
             this.deleteClient = connection.prepareStatement(DELETE_CLIENT);
 
@@ -41,13 +41,12 @@ public class ClientDao {
         }
     }
 
-    public long create(String name){
+   public long create(String name){
             try {
                 this.insertClientStatement.setString(1, name);
                 this.insertClientStatement.executeUpdate();
 
-                this.selectIDClient.setString(1, name);
-                try( ResultSet resultSet = this.selectIDClient.executeQuery()) {
+                try(ResultSet resultSet = this.insertClientStatement.getGeneratedKeys()) {
                     if(resultSet.next()){
                         return resultSet.getInt("id");
                     }
